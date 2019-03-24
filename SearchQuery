@@ -1,0 +1,36 @@
+def build_search_query(num_documents):
+    """
+    Builds a query string based on the number of documents
+    using the wild card "*" and the 'OR' operator
+
+    :param num_documents: Number of documents
+    :type num_documents: int
+
+    :return str: search query
+    """
+
+    if not isinstance(num_documents, int):
+        raise TypeError("num_documents must be of type int")
+
+    if num_documents < 1:
+        return ""
+
+    if num_documents > 999999:
+        return "A*"
+
+    num_docs_digits = [int(d) for d in str(num_documents)]
+    padding = 'A'.ljust(6 - len(num_docs_digits) + 1, '0')
+    
+    query_string = []
+    prev_place_value = ''
+    for idx, digit in enumerate(num_docs_digits):
+        wild_card = '*' if idx != len(num_docs_digits) - 1 else ''
+        curr_place_value = 0        
+        for _ in range(0, digit):
+            query_string.append(padding + prev_place_value + str(curr_place_value) + wild_card)
+            curr_place_value += 1
+        prev_place_value += str(curr_place_value)
+
+    search_query = ' OR '.join(query_string)
+    return search_query
+    
